@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesla Family Registration & Configurator</title>
+    <style>
+        :root {
+            --tesla-red: #e82127;
+            --bg-dark: #0e0e10;
+            --card-bg: #18181c;
+            --input-bg: #222228;
+            --border: #2e2e36;
+            --text-main: #f4f4f6;
+            --text-muted: #8e8e9a;
+            --accent-glow: rgba(232, 33, 39, 0.25);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 680px;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Red Accent Line */
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--tesla-red), #ff5555);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Form Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        label {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--text-muted);
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-main);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--tesla-red);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+            background-color: #282830;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* Vehicle Selection Cards */
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 4px;
+        }
+
+        .model-card {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 14px 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            user-select: none;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .model-card:hover {
+            border-color: var(--text-muted);
+            color: var(--text-main);
+        }
+
+        .model-card.active {
+            border-color: var(--tesla-red);
+            background-color: rgba(232, 33, 39, 0.1);
+            color: var(--text-main);
+            box-shadow: 0 0 0 1px var(--tesla-red);
+        }
+
+        /* Dynamic Vehicle Specs Banner */
+        .specs-banner {
+            display: flex;
+            justify-content: space-around;
+            background-color: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .spec-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .spec-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text-main);
+            transition: opacity 0.15s ease;
+        }
+
+        .spec-label {
+            font-size: 10px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        /* Submit Button */
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: var(--tesla-red);
+            color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.1s ease;
+            margin-top: 16px;
+        }
+
+        .btn-submit:hover {
+            background-color: #ff2a30;
+        }
+
+        .btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        .disclaimer {
+            text-align: center;
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 20px;
+            opacity: 0.7;
+        }
+
+        /* Success Overlay */
+        .success-overlay {
+            display: none;
+            text-align: center;
+            padding: 20px 0;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .success-overlay h2 {
+            font-size: 24px;
+            color: var(--tesla-red);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .success-details {
+            background-color: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 24px;
+            margin: 24px 0;
+            text-align: left;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .success-details strong {
+            color: var(--text-muted);
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: inline-block;
+            width: 140px;
+        }
+
+        .success-details span {
+            color: var(--text-main);
+            font-weight: 500;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 550px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            .full-width {
+                grid-column: span 1;
+            }
+            .model-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- Interactive Form -->
+        <form id="teslaForm">
+            <div class="header">
+                <h1>Tesla Family</h1>
+                <p>Register your profile and reserve your position in our global community.</p>
+            </div>
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="firstName">First Name</label>
+                    <input type="text" id="firstName" required placeholder="Elon">
+                </div>
+
+                <div class="form-group">
+                    <label for="lastName">Last Name</label>
+                    <input type="text" id="lastName" required placeholder="Musk">
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="email">Email Address</label>
+                    <input type="email" id="email" required placeholder="elon@tesla.com">
+                </div>
+
+                <!-- Model Selector Grid -->
+                <div class="form-group full-width">
+                    <label>Select Preferred Vehicle</label>
+                    <div class="model-grid" id="modelGrid">
+                        <div class="model-card active" data-model="Model S" data-range="651 km" data-acceleration="2.1s" data-top-speed="322 km/h">Model S</div>
+                        <div class="model-card" data-model="Model 3" data-range="629 km" data-acceleration="3.1s" data-top-speed="261 km/h">Model 3</div>
+                        <div class="model-card" data-model="Model X" data-range="576 km" data-acceleration="2.6s" data-top-speed="262 km/h">Model X</div>
+                        <div class="model-card" data-model="Model Y" data-range="533 km" data-acceleration="3.7s" data-top-speed="250 km/h">Model Y</div>
+                        <div class="model-card" data-model="Cybertruck" data-range="547 km" data-acceleration="2.7s" data-top-speed="209 km/h">Cybertruck</div>
+                        <div class="model-card" data-model="Roadster" data-range="1,000 km" data-acceleration="2.1s" data-top-speed="400+ km/h">Roadster</div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Specs Banner -->
+                <div class="form-group full-width">
+                    <div class="specs-banner">
+                        <div class="spec-item">
+                            <span class="spec-value" id="specRange">651 km</span>
+                            <span class="spec-label">Range (WLTP)</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-value" id="specAccel">2.1s</span>
+                            <span class="spec-label">0-100 km/h</span>
+                        </div>
+                        <div class="spec-item">
+                            <span class="spec-value" id="specSpeed">322 km/h</span>
+                            <span class="spec-label">Top Speed</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="comments">Comments / Configuration Notes</label>
+                    <textarea id="comments" placeholder="Specify any custom requests or delivery preferences..."></textarea>
+                </div>
+
+                <div class="full-width">
+                    <button type="submit" class="btn-submit">Complete Registration</button>
+                </div>
+            </div>
+
+            <p class="disclaimer">By submitting this form, you acknowledge that performance parameters vary based on system configurations and selected trims.</p>
+        </form>
+
+        <div class="success-overlay" id="successOverlay">
+            <h2>Registration Complete</h2>
+            <p>Welcome to the Tesla Family ecosystem. Your profile details have been secured.</p>
+            
+            <div class="success-details">
+                <div><strong>Registry Name:</strong> <span id="resName"></span></div>
+                <div><strong>Email Identity:</strong> <span id="resEmail"></span></div>
+                <div><strong>Selected Unit:</strong> <span id="resModel"></span></div>
+                <div><strong>Config Notes:</strong> <span id="resComments"></span></div>
+            </div>
+
+            <p class="disclaimer">A confirmation payload and virtual token will be routed to your inbox shortly.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.model-card');
+            const specRange = document.getElementById('specRange');
+            const specAccel = document.getElementById('specAccel');
+            const specSpeed = document.getElementById('specSpeed');
+            const form = document.getElementById('teslaForm');
+            const successOverlay = document.getElementById('successOverlay');
+            
+            let selectedModel = "Model S";
+
+            // Grid Select Interaction
+            cards.forEach(card => {
+                card.addEventListener('click', () => {
+                    cards.forEach(c => c.classList.remove('active'));
+                    card.classList.add('active');
+
+                    // Extract Metadata attributes
+                    selectedModel = card.getAttribute('data-model');
+                    const range = card.getAttribute('data-range');
+                    const accel = card.getAttribute('data-acceleration');
+                    const speed = card.getAttribute('data-top-speed');
+
+                    // Dynamic performance rendering adjustments
+                    specRange.textContent = range;
+                    specAccel.textContent = accel;
+                    specSpeed.textContent = speed;
+                });
+            });
+
+            // Form Payload Submission
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                // Retrieve form values
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const email = document.getElementById('email').value;
+                const comments = document.getElementById('comments').value || "None provided";
+
+                // Populate success interface items
+                document.getElementById('resName').textContent = `${firstName} ${lastName}`;
+                document.getElementById('resEmail').textContent = email;
+                document.getElementById('resModel').textContent = selectedModel;
+                document.getElementById('resComments').textContent = comments;
+
+                // Animate view layout state transition
+                form.style.display = 'none';
+                successOverlay.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
